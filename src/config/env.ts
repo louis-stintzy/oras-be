@@ -28,20 +28,22 @@ const envSchema = z.object({
     }),
 });
 
-let env: z.infer<typeof envSchema>;
+export type Env = z.infer<typeof envSchema>;
 
-try {
-  env = envSchema.parse(process.env);
-} catch (error) {
-  console.error('❌ Invalid environment variables:');
-  if (error instanceof z.ZodError) {
-    for (const issue of error.issues) {
-      console.error(`    ❗ ${issue.message}`);
+export const env: Readonly<Env> = (() => {
+  try {
+    const parsed = envSchema.parse(process.env);
+    console.log('✅ Environment variables loaded successfully');
+    return parsed;
+  } catch (error) {
+    console.error('❌ Invalid environment variables:');
+    if (error instanceof z.ZodError) {
+      for (const issue of error.issues) {
+        console.error(`    ❗ ${issue.message}`);
+      }
+    } else {
+      console.error(error);
     }
-  } else {
-    console.error(error);
+    process.exit(1);
   }
-  process.exit(1);
-}
-
-export { env };
+})();
