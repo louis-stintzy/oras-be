@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import v1Router from './routes/v1';
+import { helmetConfig } from './config/helmet';
 
 export function createApp() {
   const app = express();
@@ -22,7 +23,7 @@ export function createApp() {
 
   // Middlewares
   // httpLogger
-  // helmetConfig
+  app.use(helmetConfig);
   // corsConfig
   app.use(cookieParser());
   app.use(express.json());
