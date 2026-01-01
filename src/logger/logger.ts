@@ -1,5 +1,8 @@
 import { addColors, createLogger, format, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
+import { env } from '../config/env';
+
+const isProd = env.NODE_ENV === 'production';
 
 const customLevels = {
   error: 0,
@@ -8,6 +11,8 @@ const customLevels = {
   http: 3,
   debug: 4,
 };
+
+const logLevel = isProd ? 'http' : 'debug';
 
 const customColors = {
   error: 'red',
@@ -37,7 +42,7 @@ const fileFormat = format.combine(
 
 const logger = createLogger({
   levels: customLevels,
-  level: 'http',
+  level: logLevel,
   transports: [
     new transports.Console({
       format: consoleFormat,
