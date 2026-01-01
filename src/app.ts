@@ -1,9 +1,11 @@
 import express, { Request, Response } from 'express';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import v1Router from './routes/v1';
 import { helmetConfig } from './config/helmet';
 import { httpLogger } from './logger/httpLogger';
 import { apiRateLimiter, healthRateLimiter } from './config/rateLimit';
+import { corsOptions } from './config/cors';
 
 export function createApp() {
   const app = express();
@@ -26,7 +28,7 @@ export function createApp() {
   // Middlewares
   app.use(httpLogger);
   app.use(helmetConfig);
-  // corsConfig
+  app.use(cors(corsOptions));
   app.use(cookieParser());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
