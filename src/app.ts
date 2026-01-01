@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import v1Router from './routes/v1';
 import { helmetConfig } from './config/helmet';
 import { httpLogger } from './logger/httpLogger';
+import { apiRateLimiter, healthRateLimiter } from './config/rateLimit';
 
 export function createApp() {
   const app = express();
@@ -14,7 +15,7 @@ export function createApp() {
   app.disable('x-powered-by');
 
   // Health check route
-  app.get('/health', (_: Request, res: Response) => {
+  app.get('/health', healthRateLimiter, (_: Request, res: Response) => {
     res.status(200).json({
       status: 'OK',
       timestamp: new Date().toISOString(),
@@ -41,8 +42,7 @@ export function createApp() {
   });
 
   // API routes & rate limiting
-  // app.use('/api', apiLimiter);
-  app.use('/api/v1', v1Router);
+  app.use('/api/v1', apiRateLimiter, v1Router);
 
   // 404 handler
   app.use((_: Request, res: Response) => {
